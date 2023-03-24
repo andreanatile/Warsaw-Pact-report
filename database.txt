@@ -1,0 +1,38 @@
+hdi_map<-merge(map_data,HDI_map,by.x="region",by.y="Country",all.x = TRUE)
+ggplot()+
+  geom_map(data=hdi_map,map=hdi_map,aes(x=long,y=lat,map_id=region,fill=value),
+           color="black",size=0.2)+
+  scale_fill_gradient(low="white",high="blue")+
+  theme_void()
+
+
+hdi_map$Value<-as.numeric(hdi_map$Value)
+map1=ggplot(hdi_map,aes(x=long,y=lat,group=group))+ 
+  geom_polygon(aes(fill=Value),color="black")+
+  scale_fill_gradient(low="red",high="green")+
+  theme_void()
+plot(map1)
+
+hdi_map$Value<-as.numeric(hdi_map$Value)
+
+map2=map1+scale_fill_gradient(name="Value",low="red",high = "green",na.value = "grey50")
+plot(map2)
+
+
+polonia rep cecca ungheria 1999 2004
+estonia lettonia lituania slovacchia 2004 2004
+bulgaria romania 2004 2007
+
+17.8:2008=x:1999
+
+
+gini_index<-read_csv("gini_index.csv",skip=4)%>%
+  rename("Country_Name"="Country Name","Country_Code"="Country Code")%>%
+  pivot_longer(5:67,names_to="Year",values_to="GINI_index")%>%
+  select(-4) %>%
+  filter(Year>=1991) %>%
+  filter(Country_Name %in% c("European Union",warsaw_pact_country)) %>%
+  select(-3) %>%
+  na.omit()%>%
+  group_by(Country_Name)%>%
+  summarize(Year=last(Year),GINI_index=last(GINI_index))
